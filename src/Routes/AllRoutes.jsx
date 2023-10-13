@@ -8,6 +8,7 @@ const AllRoutes = () => {
   return (
     <Router>
       <Routes>
+      <Route exact path="/" element={<Dashboard />} />
         <Route exact path="/dashboard" element={<Dashboard />} />
         <Route exact path="/login" element={<Login />} />
         <Route exact path="/signup" element={<Signup />} />
