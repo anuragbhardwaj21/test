@@ -2,9 +2,9 @@ import axios from "axios";
 import {
   SIGNUP_NEW_USER,
   LOGIN_NEW_USER,
+  CURRENT_USER,
   IS_AUTHENTICATED,
   LOG_OUT_USER,
-  CURRENT_USER,
 } from "./actionTypes";
 
 export const signupNewUser = (userData) => ({
@@ -31,18 +31,18 @@ export const logOutUser = () => ({
   type: LOG_OUT_USER,
 });
 
-export const signupUser = (name, email, password) => (dispatch) => {
-  console.log(11);
+export const signupUser = (fullName, email, password) => (dispatch) => {
   axios
-    .post("https://todo-7jpp.onrender.com/signup", { name, email, password })
+    .post("https://json-rhch.onrender.com/users", {
+      fullName,
+      email,
+      password,
+    })
     .then((response) => {
-      const { username, userid, token } = response.data;
-      const userData = { username, userid, token };
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("userData", JSON.stringify(userData));
-      dispatch(signupNewUser(userData));
-      dispatch(setCurrentUser(userData));
+      localStorage.setItem("userData", JSON.stringify(response.data.user));
+      dispatch(signupNewUser(response.data.user));
+      dispatch(setCurrentUser(response.data.user));
       dispatch(setIsAuthenticated(true));
     })
     .catch((error) => {
@@ -52,37 +52,21 @@ export const signupUser = (name, email, password) => (dispatch) => {
 
 export const loginUser = (email, password) => (dispatch) => {
   axios
-    .post("https://todo-7jpp.onrender.com/login", { email, password })
+    .post("https://json-rhch.onrender.com/login", { email, password })
     .then((response) => {
-      const { username, userid, token } = response.data;
-      const userData = { username, userid, token };
-      localStorage.setItem("token", token);
-      localStorage.setItem("userData", JSON.stringify(userData));
-      dispatch(loginNewUser(userData));
-      dispatch(setCurrentUser(userData));
+      console.log(response.data.user);
+      localStorage.setItem("userData", JSON.stringify(response.data.user));
+      dispatch(loginNewUser(response.data.user));
+      dispatch(setCurrentUser(response.data.user));
       dispatch(setIsAuthenticated(true));
-
-      axios
-        .get("https://todo-7jpp.onrender.com/todos", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((todoResponse) => {
-          localStorage.setItem("tododata", JSON.stringify(todoResponse.data));
-        })
-        .catch((todoError) => {
-          console.error("Error fetching todo data:", todoError);
-        });
     })
     .catch((error) => {
-      console.error("error");
+      console.log(error);
     });
 };
-
 export const logoutUser = () => (dispatch) => {
-  localStorage.removeItem("token");
   localStorage.removeItem("userData");
+
   dispatch(logOutUser());
   dispatch(setIsAuthenticated(false));
 };

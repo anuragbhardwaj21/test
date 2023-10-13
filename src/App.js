@@ -1,8 +1,10 @@
-import "./App.css";
 import AllRoutes from "./Routes/AllRoutes";
+import './App.css';
 
 function App() {
-  return <AllRoutes />
+  return (
+    <AllRoutes />
+  );
 }
 
 export default App;
