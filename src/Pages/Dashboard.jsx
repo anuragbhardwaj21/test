@@ -5,7 +5,10 @@ import { Analytics } from "../Components/Analytics";
 import { History } from "../Components/History";
 import { Button, Center, HStack } from "@chakra-ui/react";
 
+
 export const Dashboard = () => {
+
+
   const [selectedComponent, setSelectedComponent] = useState("Tracker");
   document.title = `Dashboard`;
   const handleComponentChange = (componentName) => {
