@@ -1,49 +1,73 @@
-import React, { useState } from "react";
+import React, {useEffect } from "react";
 import Navbar from "../Components/Navbar";
-import { Tracker } from "../Components/Tracker";
-import { Analytics } from "../Components/Analytics";
-import { History } from "../Components/History";
-import { Button, Center, HStack } from "@chakra-ui/react";
-
+import { useSelector, useDispatch } from "react-redux";
+import { Table, Tbody, Td, Th, Thead, Tr, Box, Button } from "@chakra-ui/react";
+import { removeEmployee } from "../Redux/action";
+import { useNavigate } from "react-router-dom";
 
 export const Dashboard = () => {
-
-
-  const [selectedComponent, setSelectedComponent] = useState("Tracker");
   document.title = `Dashboard`;
-  const handleComponentChange = (componentName) => {
-    setSelectedComponent(componentName);
+
+  const employees = useSelector((store) => store.employeeReducer.employees);
+
+  
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleDeleteEmployee = (employeeId) => {
+    dispatch(removeEmployee(employeeId));
   };
 
   return (
     <div>
       <Navbar />
-      <Center mt={8}>
-        <HStack spacing={4}>
-          <Button
-            colorScheme={selectedComponent === "Tracker" ? "blue" : "gray"}
-            onClick={() => handleComponentChange("Tracker")}
-          >
-            Tracker
-          </Button>
-          <Button
-            colorScheme={selectedComponent === "Analytics" ? "blue" : "gray"}
-            onClick={() => handleComponentChange("Analytics")}
-          >
-            Analytics
-          </Button>
-          <Button
-            colorScheme={selectedComponent === "History" ? "blue" : "gray"}
-            onClick={() => handleComponentChange("History")}
-          >
-            History
-          </Button>
-        </HStack>
-      </Center>
-
-      {selectedComponent === "Tracker" && <Tracker />}
-      {selectedComponent === "Analytics" && <Analytics />}
-      {selectedComponent === "History" && <History />}
+      <Box p={4}>
+        <Table variant="simple">
+          <Thead>
+            <Tr>
+              <Th>First Name</Th>
+              <Th>Last Name</Th>
+              <Th>Email</Th>
+              <Th>Department</Th>
+              <Th>Salary</Th>
+              <Th>Edit</Th>
+              <Th>Delete</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {employees.map((employee) => (
+              <Tr key={employee._id}>
+                <Td>{employee.firstName}</Td>
+                <Td>{employee.lastName}</Td>
+                <Td>{employee.email}</Td>
+                <Td>{employee.department}</Td>
+                <Td>{employee.salary}</Td>
+                <Td>
+                  <Button
+                    colorScheme="green"
+                    onClick={() => {
+                      localStorage.setItem(
+                        "currentEmployee",
+                        JSON.stringify(employee)
+                      );
+                      navigate("/editemployee");
+                    }}
+                  >
+                    Edit
+                  </Button>
+                </Td>
+                <Td>
+                  <Button
+                    colorScheme="red"
+                    onClick={() => handleDeleteEmployee(employee._id)}
+                  >
+                    Delete
+                  </Button>
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </Box>
     </div>
   );
 };

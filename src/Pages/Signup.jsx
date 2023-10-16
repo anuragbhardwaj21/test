@@ -23,14 +23,19 @@ export const Signup = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [email, setemail] = useState("");
-  const [name, setName] = useState("");
+  const [cpassword, setcpassword] = useState("");
   const [password, setpassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(signupUser(name, email, password));
-    setName("");
+    if(cpassword !== password){
+      alert("Password Does Not Match !")
+      setcpassword("");
+      return
+    }
+    dispatch(signupUser(email, password));
+    setcpassword("");
     setemail("");
     setpassword("");
     if(isError && isError2 && isError3){
@@ -40,7 +45,7 @@ export const Signup = () => {
   };
   const isError = email === ''
   const isError2 = password === ''
-  const isError3 = name === ''
+  const isError3 = cpassword === ''
   document.title = "Signup";
 
   return (
@@ -64,17 +69,6 @@ export const Signup = () => {
           w={"30em"}
         >
           <Stack spacing={5}>
-            <FormControl id="firstName" isRequired isInvalid={isError3}>
-              <FormLabel>Full Name</FormLabel>
-              <Input
-                type="text"
-                placeholder="Name"
-                onChange={(e) => {
-                  setName(e.target.value);
-                }}
-              />
-            </FormControl>
-
             <FormControl id="email" isRequired isInvalid={isError}>
               <FormLabel>Email address</FormLabel>
               <Input
@@ -93,6 +87,29 @@ export const Signup = () => {
                   placeholder="Password"
                   onChange={(e) => {
                     setpassword(e.target.value);
+                  }}
+                />
+                <InputRightElement h={"full"}>
+                  <Button
+                    variant={"ghost"}
+                    onClick={() =>
+                      setShowPassword((showPassword) => !showPassword)
+                    }
+                  >
+                    {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
+
+            <FormControl id="cpassword" isRequired isInvalid={isError}>
+              <FormLabel>Confirm Password</FormLabel>
+              <InputGroup>
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Confirm Password"
+                  onChange={(e) => {
+                    setcpassword(e.target.value);
                   }}
                 />
                 <InputRightElement h={"full"}>
